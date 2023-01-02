@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="flex-grow: 0.25;" />
+    <ui:VisualElement>
+        <ui:Label text="Game Over" display-tooltip-when-elided="true" style="font-size: 72px; -unity-text-align: upper-center; margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px;" />
+    </ui:VisualElement>
+    <ui:VisualElement>
+        <ui:Label text="You survived for:" display-tooltip-when-elided="true" name="TimerSplash" style="font-size: 36px; -unity-text-align: upper-center; margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px;" />
+    </ui:VisualElement>
+    <ui:VisualElement>
+        <ui:Label text="Press Esc to Quit" display-tooltip-when-elided="true" style="font-size: 20px; -unity-text-align: upper-center; margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px;" />
+    </ui:VisualElement>
+</ui:UXML>

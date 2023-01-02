@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/test.uss?fileID=7433441132597879392&amp;guid=d22fc1ca677b32148aa869cbcae5df54&amp;type=3#test" />
+    <ui:VisualElement style="align-items: center; margin-top: 40px; flex-grow: 1;">
+        <ui:Label text="Maze Attack!" display-tooltip-when-elided="true" style="align-items: auto; -unity-text-align: upper-center; -unity-font: url(&apos;project://database/Library/unity%20default%20resources?fileID=10102&amp;guid=0000000000000000e000000000000000&amp;type=0#Arial&apos;); font-size: 72px; -unity-font-style: bold; justify-content: flex-start; -unity-text-outline-width: 0; text-shadow: 0 0 0 rgb(0, 0, 0); letter-spacing: 0; flex-direction: column; padding-bottom: 20px; padding-top: 0;" />
+    </ui:VisualElement>
+    <ui:VisualElement style="align-items: center; flex-grow: 0.25;">
+        <ui:Button text="Start Game" display-tooltip-when-elided="true" name="startGame" style="width: 25%; align-items: auto; height: auto; font-size: 24px; -unity-text-align: middle-center; flex-direction: column; flex-shrink: 0; padding-bottom: 1px; margin-bottom: 10px;" />
+        <ui:Button text="Exit" display-tooltip-when-elided="true" name="endGame" style="font-size: 24px; width: 25%; align-items: center;" />
+    </ui:VisualElement>
+</ui:UXML>

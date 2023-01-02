@@ -1,0 +1,41 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="flex-direction: row; flex-grow: 1;">
+        <ui:VisualElement name="Sidebar" style="flex-grow: 0.05; flex-direction: column; flex-basis: 10%; width: 20%; align-items: flex-start;">
+            <ui:VisualElement name="PauseIconPanel" style="flex-grow: 0.125; align-items: center; width: 100%;">
+                <ui:VisualElement name="IconImage" style="flex-grow: 1; padding-top: 0; background-image: url(&apos;project://database/Assets/Clean%20Vector%20Icons/T_8_pause_.png?fileID=21300000&amp;guid=a1bda28f797f71c4db09f6a0d4af4759&amp;type=3#T_8_pause_&apos;); height: 60%; width: 60%; margin-bottom: 5px; min-width: 60px; min-height: 60px; margin-top: 10px;" />
+                <ui:Label text="Esc - Pause" display-tooltip-when-elided="true" style="width: auto; font-size: 24%; background-image: none;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="IconPanel" style="flex-grow: 0.125; align-items: center; width: 100%;">
+                <ui:VisualElement name="IconImage" style="flex-grow: 1; margin-top: 10px; margin-bottom: 5px; background-image: url(&apos;project://database/Assets/Clean%20Vector%20Icons/T_10_hammer_.png?fileID=21300000&amp;guid=7dfd68325eeac354d866d207e4d2744c&amp;type=3#T_10_hammer_&apos;); width: 60%; height: 60%; min-width: 60px; min-height: 60px; align-items: auto;" />
+                <ui:Label text="Q - Build" display-tooltip-when-elided="true" style="width: auto; font-size: 24%;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="IconPanel" style="flex-grow: 0.125; align-items: center; width: 100%;">
+                <ui:VisualElement name="IconImage" style="flex-grow: 1; margin-top: 10px; margin-bottom: 5px; background-image: url(&apos;project://database/Assets/Clean%20Vector%20Icons/Update/bonus_04.png?fileID=21300000&amp;guid=ef147e2665db3394ab8f3c2ade98cbf5&amp;type=3#bonus_04&apos;); width: 60%; height: 60%; min-width: 60px; min-height: 60px;" />
+                <ui:Label text="R - Switch" display-tooltip-when-elided="true" style="width: auto; font-size: 24%;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="IconPanel" style="flex-grow: 0.125; align-items: center; width: 100%;">
+                <ui:VisualElement name="IconImage" style="flex-grow: 1; margin-top: 10px; margin-bottom: 5px; background-image: url(&apos;project://database/Assets/Clean%20Vector%20Icons/T_11_pickaxe_.png?fileID=21300000&amp;guid=0138ff996cf7410479c3dfffa5472ee1&amp;type=3#T_11_pickaxe_&apos;); width: 60%; height: 60%; min-width: 60px; min-height: 60px;" />
+                <ui:Label text="E - Destroy" display-tooltip-when-elided="true" style="width: auto; font-size: 24%;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="IconPanel" style="flex-grow: 0.125; align-items: center; width: 100%;">
+                <ui:VisualElement name="IconImage" style="flex-grow: 1; margin-top: 10px; margin-bottom: 5px; background-image: url(&apos;project://database/Assets/Clean%20Vector%20Icons/T_12_ok_.png?fileID=21300000&amp;guid=de50d1f4106f65545921a17c92cf0250&amp;type=3#T_12_ok_&apos;); width: 60%; height: 60%; min-width: 60px; min-height: 60px; visibility: visible;" />
+                <ui:Label text="O - Start" display-tooltip-when-elided="true" style="width: auto; font-size: 24%;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement style="flex-grow: 1; flex-direction: column;">
+            <ui:VisualElement style="flex-direction: row; justify-content: flex-end;">
+                <ui:VisualElement name="TimerGroup" style="flex-direction: row-reverse; flex-grow: 0.4; align-items: auto; justify-content: center; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; background-image: url(&apos;project://database/Assets/Fantasy%20Wooden%20GUI%20%20Free/normal_ui_set%20A/UI%20board%20Small%20%20stone.png?fileID=2800000&amp;guid=8dd861a6e819de241bca68a36048a6bd&amp;type=3#UI board Small  stone&apos;); -unity-background-scale-mode: stretch-to-fill; padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px; width: auto;">
+                    <ui:Label text="00:00:00" display-tooltip-when-elided="true" name="Timer" style="flex-grow: 0; font-size: 24%;" />
+                    <ui:Label text="Time Elapsed: " display-tooltip-when-elided="true" name="TimerLabel" style="font-size: 24%; margin-right: 10px;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 1;">
+                <ui:VisualElement name="ControlSplash" style="align-items: center; margin-top: 20px; background-image: url(&apos;project://database/Assets/Fantasy%20Wooden%20GUI%20%20Free/normal_ui_set%20A/UI%20board%20Medium%20stone.png?fileID=2800000&amp;guid=9a6560e5bacb40847bb1b879ede354fb&amp;type=3#UI board Medium stone&apos;); padding-top: 15px; margin-left: 20px; margin-right: 20px; padding-bottom: 20px;">
+                    <ui:Label text="Controls:" display-tooltip-when-elided="true" name="Label" style="font-size: 48%; margin-bottom: 15px;" />
+                    <ui:Label text="Rotate: Hold Right Click\nMove Camera: WASD + Space + Shift\nToggle Build Mode: Q\nSwitch Building Block: R while in Build Mode\nToggle Destroy Mode: E while in Build Mode\nBegin Spawning Enemies: O (will disable build mode)\nPause Game: Escape" display-tooltip-when-elided="true" style="align-items: auto; font-size: 24%; margin-bottom: 15px;" />
+                    <ui:Label text="Press I to close" display-tooltip-when-elided="true" name="Label" style="font-size: 32%;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
