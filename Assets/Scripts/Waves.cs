@@ -16,11 +16,16 @@ public class Waves : MonoBehaviour
     public GameObject builder;
     public GameObject gameDisplay;
     public MainMenu mainMenu;
+    public AstarNav pathfinder;
+    private Node path;
     private List<VisualElement> elements;
     public bool isSpawning = false;
     public bool debug;
     private bool firstSpawn;
     private int cap;
+    private Vector2Int playerLoc;
+    private Vector2Int spawnLoc;
+
     void Start()
     {
         firstSpawn = true;
@@ -29,6 +34,8 @@ public class Waves : MonoBehaviour
         elements = gameDisplay.GetComponent<UIDocument>().rootVisualElement.Query("IconPanel").Children<VisualElement>().ToList();
         gameDisplay.SetActive(false);
         cap = 1;
+        playerLoc = new Vector2Int(95, 95);
+        spawnLoc = new Vector2Int(104, 104);
     }
     void Update()
     {
@@ -44,6 +51,9 @@ public class Waves : MonoBehaviour
         {
             if (state == SpawnState.STANDARD)
             {
+                path = pathfinder.findPath(playerLoc, spawnLoc); // Generates a path backwards from goal to source
+                if (path == null) Debug.LogError("No Path Found!");
+                if (debug && path != null) builder.SendMessage("displayPath", path);
                 for (int x = 0; x < cap; x++)
                 {
                     Debug.Log("cap: " + cap.ToString() + " x: " + x.ToString());
@@ -62,12 +72,14 @@ public class Waves : MonoBehaviour
         yield return new WaitForSeconds(1f);
         state = SpawnState.SPAWNING;
         // random position spaces out the enemies, so that collision doesn't cause them to shoot across the map
-        GameObject newEnemy = Instantiate(Enemy, randomPos(transform.position, 10), Quaternion.identity);
+        GameObject newEnemy = Instantiate(Enemy, randomPos(transform.position, 7.5f), Quaternion.identity);
         newEnemy.SetActive(true);
         // as the enemy cap increases, so does the health
         newEnemy.SendMessage("setHealth", cap * 10);
         newEnemy.GetComponent<UnityEngine.AI.NavMeshAgent>().isStopped = false;
         newEnemy.tag = "Enemy";
+        newEnemy.layer = 6;
+        newEnemy.SendMessage("setPath", path);
         yield return new WaitForSeconds(1.0f);
         state = SpawnState.FIGHTING;
         yield return new WaitForSeconds(10f);
@@ -93,7 +105,7 @@ public class Waves : MonoBehaviour
                 Enemies[i].GetComponent<UnityEngine.AI.NavMeshAgent>().isStopped = !Enemies[i].GetComponent<UnityEngine.AI.NavMeshAgent>().isStopped;
             }
         }
-        if (isSpawning)
+        if (isSpawning && !debug)
         {
             builder.SendMessage("leaveBuildMode");
             foreach (VisualElement e in elements)
@@ -113,5 +125,12 @@ public class Waves : MonoBehaviour
     public bool getIsSpawning() 
     { 
         return isSpawning; 
+    }
+
+    private void resetSpawner()
+    {
+        cap = 0;
+        isSpawning = false;
+        firstSpawn = true;
     }
 }

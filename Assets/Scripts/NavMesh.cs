@@ -10,6 +10,9 @@ public class NavMesh : MonoBehaviour
     Transform me;                       // Reference to the enemy's position.
     UnityEngine.AI.NavMeshAgent nav;    // Reference to the nav mesh agent.
     Animator anim;
+    public BuildMode builder;
+    private Node path;
+    private Vector3 nextPos;
     private float health = 50;
     private bool isPath;
 
@@ -20,12 +23,25 @@ public class NavMesh : MonoBehaviour
         me = GetComponent<Transform>();
         anim = GetComponent<Animator>();
         nav.isStopped = true;
+        nextPos = builder.GetWorldSpace(new Vector2Int(104, 104));
     }
 
 
     void FixedUpdate()
     {
-        isPath = nav.SetDestination(player.position);
+        if (Vector3.Distance(me.position,nextPos) < 2.5)
+        {
+            if (path.getParent() != null)
+            {
+                path = path.getParent();
+                nextPos = builder.GetWorldSpace(path.getCoord());
+            }
+            else
+            {
+                nextPos = builder.GetWorldSpace(new Vector2Int(95, 95));
+            }
+        }
+        nav.SetDestination(nextPos);
         if (!isPath)
         {
             nav.isStopped = true;
@@ -54,6 +70,20 @@ public class NavMesh : MonoBehaviour
     private void setHealth(int newHealth)
     {
         health = newHealth;
+    }
+
+    private void setPath(Node newPath)
+    {
+        if (newPath == null)
+        {
+            path = null;
+            isPath = false;
+        }
+        else
+        {
+            path = newPath;
+            isPath = true;
+        }
     }
 
     IEnumerator Death()

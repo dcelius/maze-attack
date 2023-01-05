@@ -6,15 +6,19 @@ public class BuildMode : MonoBehaviour
 {
     public Camera Camera1; // Free Cam
     public Camera Camera2; // Build Camera
+    public AstarNav pathfinder;
     public UIDocument gameUI;
     public MainMenu mainMenu;
     public Waves spawner;
     public GameObject Block;
     public GameObject Trap;
+    public GameObject NoGoZone;
     public GameObject Grid;
+    public GameObject pathDisplayBlock;
     private GameObject activeItem;
     private GameObject[] Labels;
     private List<GameObject> items;
+    private List<int> itemCosts;
     private Vector3 newPos = Vector3.zero;
     public float cubeSize;
     public float camThrust;
@@ -36,13 +40,19 @@ public class BuildMode : MonoBehaviour
         toggleLabels(false);
         cubeSize = cubeSize / 2;
         items = new List<GameObject>();
+        itemCosts = new List<int>();
         items.Add(Block);
+        itemCosts.Add(-1);
         items.Add(Trap);
+        itemCosts.Add(1);
+        if (spawner.debug) items.Add(NoGoZone);
+        if (spawner.debug) itemCosts.Add(1);
         itemType = items.IndexOf(Block);
-        Block.GetComponent<Renderer>().material.SetColor("_Color", Color.blue);
-        Trap.GetComponent<Renderer>().material.SetColor("_Color", Color.blue);
-        Block.SetActive(false);
-        Trap.SetActive(false);
+        foreach (GameObject o in items)
+        {
+            o.GetComponent<Renderer>().material.SetColor("_Color", Color.blue);
+            o.SetActive(false);
+        }
         activeItem = Block;
     }
 
@@ -50,12 +60,11 @@ public class BuildMode : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.I) && mainMenu.getIsPlaying())
+        if ((Input.GetKeyDown(KeyCode.I) || (Input.GetMouseButtonDown(0) && controlsSplash)) && mainMenu.getIsPlaying())
         {
-            controlsSplash = !controlsSplash;
-            gameUI.rootVisualElement.Q<VisualElement>("ControlSplash").visible = controlsSplash;
+            toggleSplash(!controlsSplash);
         }
-        if (!spawner.getIsSpawning() && mainMenu.getIsPlaying())
+        if ((!spawner.getIsSpawning() || spawner.debug) && mainMenu.getIsPlaying())
         {
             if (Input.GetKeyDown("q") && isBuilding)
             {
@@ -84,13 +93,17 @@ public class BuildMode : MonoBehaviour
                 isDestroying = !isDestroying;
                 if (isDestroying)
                 {
-                    Block.GetComponent<Renderer>().material.SetColor("_Color", Color.red);
-                    Trap.GetComponent<Renderer>().material.SetColor("_Color", Color.red);
+                    foreach (GameObject o in items)
+                    {
+                        o.GetComponent<Renderer>().material.SetColor("_Color", Color.red);
+                    }
                 }
                 else
                 {
-                    Block.GetComponent<Renderer>().material.SetColor("_Color", Color.blue);
-                    Trap.GetComponent<Renderer>().material.SetColor("_Color", Color.blue);
+                    foreach (GameObject o in items)
+                    {
+                        o.GetComponent<Renderer>().material.SetColor("_Color", Color.blue);
+                    }
                 }
             }
             // Switch active object
@@ -106,11 +119,12 @@ public class BuildMode : MonoBehaviour
                 newPos = GetWorldPosition();
                 activeItem.transform.position = newPos;
                 // Place item on map at new position of mouse
-                if (Input.GetMouseButtonDown(0))
+                if (Input.GetMouseButton(0))
                 {
                     newPos = new Vector3(roundUp(newPos.x, cubeSize * 2) 
                         - cubeSize, activeItem.transform.localScale.y / 2, 
                         roundUp(newPos.z, cubeSize * 2) - cubeSize);
+                    Debug.Log("Array space: " + GetGridSpace(newPos));
                     GameObject collision = findObjectWithinRange(newPos, cubeSize, "MapPiece");
                     // If the location is valid and not in destroy mode, place object
                     if (collision == null)
@@ -119,16 +133,16 @@ public class BuildMode : MonoBehaviour
                         {
                             GameObject newObject = Instantiate(GameObject.Find(activeItem.name + "R"), newPos, Quaternion.identity);
                             numGameObjects++;
+                            pathfinder.addToGrid(itemCosts[itemType], GetGridSpace(newPos));
                             newObject.tag = "MapPiece";
                             newObject.name = newObject.name + " " + numGameObjects;
                         }
                     }
                     else
                     {
-                        //Debug.Log("Placement at " + newPos.ToString() + " ignored because an object is already there.");
-                        if (isDestroying)
+                        if (isDestroying && !collision.name.Contains("walls"))
                         {
-                            //Debug.Log("in Destroy mode, removing " + collision.name + " found at " + collision.transform.position.ToString());
+                            pathfinder.removeFromGrid(GetGridSpace(collision.transform.position));
                             Destroy(collision);
                         }
                     }
@@ -146,7 +160,9 @@ public class BuildMode : MonoBehaviour
         float ratio = ortho * 2 / Camera2.scaledPixelHeight;
         float xcor = Camera2.transform.position.x - ortho * (screenWidth / screenHeight);
         float zcor = Camera2.transform.position.z - ortho;
-        Vector3 pos = new Vector3(xcor + ratio * adjustedPos.x, cubeSize, zcor + ratio * adjustedPos.y);
+        xcor = Mathf.Clamp(xcor + ratio * adjustedPos.x, cubeSize, 1000-cubeSize);
+        zcor = Mathf.Clamp(zcor + ratio * adjustedPos.y, cubeSize, 1000-cubeSize);
+        Vector3 pos = new Vector3(xcor, cubeSize, zcor);
         return pos;
     }
 
@@ -171,6 +187,12 @@ public class BuildMode : MonoBehaviour
         {
             Labels[i].SetActive(toggle);
         }
+    }
+
+    private void toggleSplash(bool splash)
+    {
+        controlsSplash = splash;
+        gameUI.rootVisualElement.Q<VisualElement>("ControlSplash").visible = controlsSplash;
     }
 
     //Detects multiples to prevent trap stacking and an excessive amount of blocks in one space
@@ -243,4 +265,29 @@ public class BuildMode : MonoBehaviour
         return p_Velocity;
     }
 
+    public Vector2Int GetGridSpace(Vector3 pos)
+    {
+        return new Vector2Int(Mathf.FloorToInt((newPos.x - cubeSize) / (cubeSize * 2)), Mathf.FloorToInt((newPos.z - cubeSize) / (cubeSize * 2)));
     }
+
+    public Vector3 GetWorldSpace(Vector2Int cell)
+    {
+        return new Vector3((cell.x * cubeSize * 2) + cubeSize, 0.1f, (cell.y * cubeSize * 2) + cubeSize);
+    }
+
+    public void displayPath(Node node)
+    {
+        foreach (GameObject o in GameObject.FindGameObjectsWithTag("DisplayPiece")) Destroy(o);
+        Vector3 tmp;
+        GameObject tmp2;
+        while (node.getParent() != null)
+        {
+            tmp = GetWorldSpace(node.getCoord());
+            tmp.y = 50;
+            Debug.Log("Displaying node " + node.x + " " + node.y + " at " + tmp.ToString());
+            tmp2 = Instantiate(pathDisplayBlock, tmp, Quaternion.identity);
+            tmp2.tag = "DisplayPiece";
+            node = node.getParent();
+        }
+    }
+}

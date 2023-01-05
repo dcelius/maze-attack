@@ -9,12 +9,13 @@ public class PauseMenu : MonoBehaviour
     private UIDocument ui;
     private Button confirm;
     private Button cancel;
-
+    public AstarNav pathfinder;
     public Camera freeCam;
     public Camera mainMenuCam;
     public Camera buildModeCam;
     public GameObject mainMenu;
     public GameObject gameDisplay;
+    public GameObject spawn;
 
     // Start is called before the first frame update
     void Start()
@@ -35,11 +36,22 @@ public class PauseMenu : MonoBehaviour
     {
         // Clear all new Game Objects
         GameObject[] mapPieces = GameObject.FindGameObjectsWithTag("MapPiece");
-        foreach (GameObject x in mapPieces) Destroy(x);
+        foreach (GameObject x in mapPieces)
+        {
+            if (!x.name.Contains("walls")) Destroy(x);
+        }
+        GameObject[] displayPieces = GameObject.FindGameObjectsWithTag("DisplayPiece");
+        foreach (GameObject x in displayPieces)
+        {
+            Destroy(x);
+        }
+        pathfinder.resetGrid();
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         foreach (GameObject x in enemies) Destroy(x);
         // Leave build mode if in it
         buildModeCam.gameObject.SendMessage("leaveBuildMode");
+        // Reset spawner
+        spawn.SendMessage("resetSpawner");
         // Reset timer
         gameDisplay.SetActive(true);
         gameDisplay.SendMessage("resetTimer");
@@ -60,6 +72,7 @@ public class PauseMenu : MonoBehaviour
     {
         Time.timeScale = 1;
         gameDisplay.SetActive(true);
+        buildModeCam.gameObject.SendMessage("toggleSplash", false);
         this.gameObject.SetActive(false);
         UnityEngine.Cursor.visible = false;
     }

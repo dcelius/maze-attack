@@ -7,13 +7,11 @@ public class Timer : MonoBehaviour
 {
     public UIDocument ui;
     public Waves spawner;
-    private Label timer;
     private float timeCount;
 
     void Start()
     {
         timeCount = 0f;
-        timer = ui.rootVisualElement.Q<Label>("Timer");
     }
 
     void Update()
@@ -26,13 +24,13 @@ public class Timer : MonoBehaviour
             int milliseconds = Mathf.FloorToInt((timeCount * 100F) % 100F);
             // Update UI text with new time
             string newTime = minutes.ToString("00") + ":" + seconds.ToString("00") + ":" + milliseconds.ToString("00");
-            timer.text = newTime;
+            ui.rootVisualElement.Q<Label>("Timer").text = newTime;
         }
     }
 
     private void resetTimer()
     {
-        timeCount = 0;
+        timeCount = 0f;
     }
 
     private void toggleView (VisualElement element)
